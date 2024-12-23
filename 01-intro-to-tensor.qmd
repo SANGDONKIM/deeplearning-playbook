@@ -1,0 +1,122 @@
+# 딥러닝 첫걸음, 텐서 (tensor) 만들기 {#intro}
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+Sys.setenv(RETICULATE_PYTHON = "/opt/homebrew/Caskroom/miniconda/base/envs/torch/bin/python")
+library(reticulate)
+use_python("/opt/homebrew/Caskroom/miniconda/base/envs/torch/bin/python", required = T)
+```
+
+## torch와의 첫 만남
+
+PyTorch를 설치했으니, 한번 만나보자. 아래 명령어로 torch를 불러온다.
+
+```{python}
+import torch
+```
+
+
+## 텐서(Tensor) 만들기
+
+텐서는 다차원 배열이다. 우리가 많이 사용하는 행렬(matrix)의 개념을 확장한 것이다. Python의 numpy 배열과 비슷하지만, GPU 계산이 가능하다는 점에서 차별화된다.
+
+## 빈 텐서 만들기
+
+5행 3열의 빈 텐서를 선언한다. 빈 텐서는 초기화되지 않은 임의의 값으로 채워진다.
+
+```{python}
+x = torch.empty(5, 3)
+# 텐서 x값 확인
+print(x)
+# 텐서 x의 크기 확인
+print(x.size())
+```
+
+empty 텐서는 초기화되지 않은 값이 채워진다. 이후 값이 정의되기 전에는 신뢰할 수 없는 데이터가 포함되어 있으니 주의하자.
+
+### 랜덤 텐서
+
+0과 1 사이의 난수로 채워진 텐서를 선언한다.
+
+```{python}
+rand_tensor = torch.rand(5, 3)
+print(rand_tensor)
+```
+
+Python에서는 리스트와 비슷한 문법을 사용해 텐서에 접근할 수 있다.
+
+```{python}
+print(rand_tensor[:, 1])  # 두 번째 열
+print(rand_tensor[:3, :])  # 첫 3행
+print(rand_tensor[2:4, [0, 2]])  # 3~4행의 1, 3열
+```
+
+
+### 단위 텐서
+
+4행 4열의 단위 텐서를 선언한다.
+
+```{python}
+x = torch.eye(4)
+print(x)
+```
+
+
+### 영(0) 텐서
+
+모든 값이 0으로 채워진 3행 5열 텐서를 선언한다.
+
+```{python}
+x = torch.zeros(3, 5)
+print(x)
+```
+
+## 고급 기술: 영리하게 만들기
+
+지금까지는 초기화 함수들로 텐서를 선언했지만, 직접 값을 지정해 텐서를 선언할 수도 있다.
+
+### 텐서 직접 선언
+
+리스트 또는 2D 배열로 텐서를 만들 수 있다.
+
+```{python}
+y = torch.tensor([[1, 2], [3, 4], [5, 6]])
+print(y)
+```
+
+### range 함수 사용
+
+Python의 range를 사용해 텐서를 선언해보자.
+
+```{python}
+y = torch.tensor([i for i in range(1, 7)]).reshape(3, 2)
+print(y)
+```
+
+### torch.linspace 함수 사용
+
+torch.linspace를 사용하면 특정 범위의 값을 지정해 텐서를 만들 수 있다.
+
+```{python}
+y = torch.linspace(0.1, 1, steps=10).reshape(5, 2)
+print(y)
+```
+
+## 텐서와 행렬은 같을까?
+
+PyTorch의 텐서와 Numpy의 행렬은 비슷하지만 동일하지 않다. PyTorch 텐서는 GPU 연산에 최적화되어 있다. 다만 단순한 행렬곱 연산자 \@와 토치 연산자인 torch.matmul은 같은 결과를 도출한다. 
+
+```{python}
+x = torch.zeros(3, 5)
+
+# 행렬 곱 
+result = x @ x.T
+print(result)
+
+# 텐서 연산을 위해 torch.matmul() 사용
+result = torch.matmul(x, x.T)
+print(result)
+```
+
+## 텐서를 다룰 때 주의사항
+
+PyTorch 텐서의 인덱싱은 Python 리스트와 동일하게 0부터 시작한다. R과는 다르니 주의하자. 다음 장에서는 텐서의 연산에 대해 더 자세히 다뤄보자.

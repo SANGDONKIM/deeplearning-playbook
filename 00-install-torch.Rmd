@@ -1,0 +1,77 @@
+# 파이토치 설치하기
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+Sys.setenv(RETICULATE_PYTHON = "/opt/homebrew/Caskroom/miniconda/base/envs/torch/bin/python")
+library(reticulate)
+use_python("/opt/homebrew/Caskroom/miniconda/base/envs/torch/bin/python", required = T)
+```
+
+파이토치(PyTorch)는 Python 환경에서 설치할 수 있다. 공식 웹사이트에서 제공하는 명령어를 참고하면 쉽게 설치할 수 있다.
+
+1.  파이토치 공식 설치 명령어 찾기
+
+파이토치 공식 웹사이트에서 운영 체제와 컴퓨팅 환경에 맞는 명령어를 선택하면 된다. [파이토치홈페이지](https://pytorch.org/get-started/locally/)로 가서 아래 항목을 선택해보자.
+
+-   PyTorch 빌드: Stable (안정된 버전) 또는 Nightly (개발 버전)
+
+-   운영 체제: Windows, macOS, Linux
+
+-   패키지 관리자: pip 또는 conda
+
+-   컴퓨팅 플랫폼: CPU 또는 CUDA(GPU 버전)
+
+2.  설치 명령어 예제
+
+<!-- -->
+
+(1) CPU만 사용하는 경우
+
+Python과 pip를 사용한다면:
+
+```{python}
+pip install torch torchvision torchaudio
+```
+
+conda를 사용한다면:
+
+```{python}
+conda install pytorch torchvision torchaudio cpuonly -c pytorch
+```
+
+(2) GPU(CUDA) 사용하는 경우
+
+CUDA 11.8을 사용하는 GPU 환경이라면:
+
+pip install torch torchvision torchaudio --index-url <https://download.pytorch.org/whl/cu118>
+
+CUDA 11.7을 사용하는 경우:
+
+pip install torch torchvision torchaudio --index-url <https://download.pytorch.org/whl/cu117>
+
+conda를 사용하려면:
+
+conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+
+3.  설치 확인
+
+설치가 제대로 되었는지 확인하려면 아래 코드를 실행해보자.
+
+```{python}
+import torch 
+print(torch.__version__) # PyTorch 버전을 출력 
+print(torch.cuda.is_available()) # GPU 사용 가능 여부 확인
+```
+
+torch.cuda.is_available()가 True라면 GPU 설정까지 완료된 것이다.
+
+4.  문제 해결
+
+설치 중 문제가 생기면 다음을 확인해보자.
+
+-   Python 버전은 3.9 이상이어야 한다.
+
+-   GPU 드라이버가 최신 버전인지 확인해야 한다.
+
+-   CUDA Toolkit 설치가 필요하다면 CUDA Toolkit 다운로드로 가서 설치한다.
+
+특정 버전을 설치하려면 아래 명령어를 사용하면 된다.

@@ -1,0 +1,81 @@
+# 텐서의 이동: CPU ⇔ GPU
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+Sys.setenv(RETICULATE_PYTHON = "/opt/homebrew/Caskroom/miniconda/base/envs/torch/bin/python")
+library(reticulate)
+use_python("/opt/homebrew/Caskroom/miniconda/base/envs/torch/bin/python", required = T)
+```
+
+딥러닝에서는 계산량이 많아지기 때문에 GPU는 필수적이다. PyTorch에서는 텐서를 다룰 때, 텐서가 현재 어디에 저장되어 있는지에 대한 정보를 제공한다. GPU를 활용하는 방법을 알아보자.
+
+GPU 사용 가능 여부 확인
+
+현재 시스템에서 GPU를 사용할 수 있는지 확인하려면 torch.cuda.is_available()을 사용한다.
+
+
+```{python}
+import torch
+
+# GPU 사용 가능 여부 확인
+print(torch.cuda.is_available())
+```
+
+## CPU에서 GPU로 이동
+
+텐서를 GPU로 이동하려면 .to(device) 또는 .cuda()를 사용한다.
+
+```{python}
+# CPU에서 텐서 생성
+a = torch.tensor([1, 2, 3, 4])
+print(a)
+```
+
+```{python}
+# GPU로 이동
+a_gpu = a.cuda()  # 또는 a.to('cuda')
+print(a_gpu)
+```
+
+## 자료형 변환과 함께 이동
+
+GPU로 이동할 때 자료형을 동시에 변경할 수도 있다.
+
+```{python}
+a_gpu_double = a.to(device='cuda', dtype=torch.float64)
+print(a_gpu_double)
+```
+
+## GPU에서 CPU로 이동
+
+GPU 상에서 생성된 텐서를 다시 CPU로 이동하려면 .to('cpu') 또는 .cpu()를 사용한다.
+
+```{python}
+# GPU에서 텐서 생성
+b = torch.tensor([1, 2, 3, 4], device='cuda')
+print(b)
+
+# CPU로 이동
+b_cpu = b.cpu()  # 또는 b.to('cpu')
+print(b_cpu)
+```
+
+
+## GPU 상에서 텐서 생성
+
+GPU 상에서 바로 텐서를 생성할 수도 있다. 아래는 GPU에 직접 텐서를 만드는 코드다.
+
+```{python}
+b = torch.tensor([1, 2, 3, 4], device='cuda')
+print(b)
+```
+
+## 주의사항
+
+GPU로 이동된 텐서를 사용하려면, 해당 텐서를 포함한 연산도 GPU에서 수행되어야 한다. 만약 CPU와 GPU 간의 텐서를 혼합해서 연산하면 오류가 발생한다.
+
+```{python}
+#| error: true
+# 오류 예시 (CPU 텐서와 GPU 텐서를 함께 사용)
+a = torch.tensor([1, 2, 3, 4])  # CPU 텐서
+b = torch.tensor([1, 2, 3, 4], device='cuda')  # GPU 텐서
+```

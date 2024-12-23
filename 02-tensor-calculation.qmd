@@ -1,0 +1,174 @@
+# 텐서(Tensor) 연산 {#operation}
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+Sys.setenv(RETICULATE_PYTHON = "/opt/homebrew/Caskroom/miniconda/base/envs/torch/bin/python")
+library(reticulate)
+use_python("/opt/homebrew/Caskroom/miniconda/base/envs/torch/bin/python", required = T)
+```
+
+지난 챕터에서 텐서가 Python의 일반 배열과는 다르며, 텐서 연산에서 주의해야 할 점이 있다는 것을 배웠다. 이번 챕터에서는 텐서의 다양한 연산에 대해 알아보자.
+
+## PyTorch 불러오기 및 준비
+
+PyTorch를 불러오고, 이번 챕터에서 사용할 텐서 A, B, C를 준비한다. 난수 고정을 통해 재현 가능성을 보장한다.
+
+```{python}
+import torch
+
+# 난수 생성 시드 고정
+torch.manual_seed(2021)
+```
+
+```{python}
+# 텐서 정의
+A = torch.tensor([1, 2, 3, 4, 5, 6])
+B = torch.rand(2, 3)
+C = torch.rand(2, 3, 2)
+
+print(A)
+print(B)
+print(C)
+```
+
+## 텐서의 속성 확인
+
+PyTorch 텐서는 자료형과 모양(Shape) 정보를 제공한다. 이를 통해 텐서의 구조를 확인할 수 있다.
+
+```{python}
+print(A.dtype)  # 자료형 확인
+print(B.dtype)
+print(A.shape)  # 모양(Shape) 확인
+print(B.shape)
+```
+
+## 텐서의 연산
+
+### 자료형 변환
+
+A는 현재 정수형 텐서이다. 이를 실수형 텐서로 변환해보자.
+
+```{python}
+A = A.to(dtype=torch.float64)  # 자료형 변환
+print(A)
+```
+
+### 모양(Shape) 변환
+
+현재 A와 B는 자료형이 같지만 모양이 달라 더할 수 없다. 모양을 맞추기 위해 view()를 사용한다.
+
+```{python}
+A = A.view(2, 3)  # 2행 3열로 변환
+print(A)
+```
+
+특정 차원을 -1로 설정하면 자동으로 계산된 차원이 지정된다.
+
+```{python}
+A_reshaped = A.view(1, -1)  # 1행으로 변환
+print(A_reshaped)
+```
+
+### 덧셈과 뺄셈
+
+모양과 자료형이 맞으면 텐서끼리 덧셈과 뺄셈이 가능하다.
+
+```{python}
+print(A + B)
+print(A - B)
+```
+
+### 상수와의 연산
+
+상수와의 연산도 각 원소별로 적용된다.
+
+```{python}
+print(A + 2)
+print(B ** 2)
+print(A // 3)  # 정수 나눗셈
+print(A % 3)   # 나머지
+```
+
+### 제곱근과 로그
+
+제곱근과 로그 함수도 각 원소에 적용된다. 다만, 자료형이 맞지 않으면 오류가 발생할 수 있다.
+
+```{python}
+print(torch.sqrt(A))  # 제곱근
+print(torch.log(B))   # 로그
+```
+
+### 텐서 곱셈
+
+C는 3차원 텐서이다. 이 중 첫 번째 2차원 텐서를 떼어내 B와 곱해보자.
+
+```{python}
+D = C[0, :, :]  # 첫 번째 2차원 텐서 선택
+print(D)
+```
+
+```{python}
+result = torch.matmul(B, D)  # 텐서 곱셈
+print(result)
+```
+
+PyTorch에서는 다양한 방법으로 텐서 곱셈을 수행할 수 있다.
+
+```{python}
+print(torch.mm(B, D))     # 2차원 전용
+print(B.mm(D))            # 텐서의 메서드
+print(B.matmul(D))        # 텐서의 메서드
+```
+
+### 텐서의 전치(Transpose)
+
+텐서의 차원을 전치하려면 transpose() 또는 permute()를 사용한다.
+
+```{python}
+print(A)
+print(A.T)  # 2차원 텐서 전치
+```
+
+3차원 이상의 텐서에서는 전치할 차원을 지정해야 한다.
+
+```{python}
+print(torch.transpose(C, 1, 2))  # 2번째와 3번째 차원을 교환
+```
+
+### 다차원 텐서와 1차원 텐서의 연산
+
+다차원 텐서와 1차원 텐서의 연산은 자동으로 차원을 맞춰준다(브로드캐스팅).
+
+```{python}
+print(A)
+print(A + torch.tensor([1, 2, 3]))
+```
+
+### 1차원 텐서 간의 연산 (내적과 외적)
+
+1차원 텐서끼리의 연산도 가능하지만, 모양을 명확히 정의해야 한다.
+
+```{python}
+A_1 = A.view(1, -1)  # 1행 벡터
+A_2 = A.view(-1, 1)  # 1열 벡터
+
+print(A_1.mm(A_2))  # 내적 (결과는 스칼라)
+print(A_2.mm(A_1))  # 외적 (결과는 행렬)
+```
+
+#### 모양 오류 확인
+
+차원이 맞지 않으면 연산이 불가능하다.
+
+```{python}
+#| error: true
+A_3 = torch.tensor([1, 2, 3, 4, 5, 6])
+print(A_1.mm(A_3))  # 오류 발생
+```
+
+```{python}
+print(A_1.shape)
+print(A_3.shape)  # 차원이 맞지 않음
+```
+
+각 연산은 데이터의 모양과 자료형을 명확히 맞추는 것이 중요하다.
+
