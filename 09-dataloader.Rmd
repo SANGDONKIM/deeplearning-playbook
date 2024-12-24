@@ -354,24 +354,24 @@ knitr::kable(confusion_mat, format="html", booktabs = TRUE,
 아래 그림에서처럼 로지스틱 함수는 입력값이 0일때 함수값이 0.5가 된다. 즉, 로지스틱 회귀에서 $X\beta$값이 로지스틱 함수에 입력이 되므로, $X\beta$ 값이 0이 되는 값들을 경계로 모델의 합격 불합격 예측값이 갈리는 것이다. 
 
 ```{r logistic-fcn, echo=FALSE, fig.align="center", fig.cap="로지스틱 함수는 x가 0일때 0.5를 지나게 된다."}
-x <- seq(-5, 5, by = 0.1)
-y <- 1 / (1 + exp(-x))
-
-ggplot(data = tibble(x = x, y = y), aes(x = x, y = y)) +
-  geom_line() +
-  geom_hline(yintercept = 0.5,
-             linetype = "dashed", col = "red") +
-  geom_vline(xintercept = 0, linetype = "dashed", col = "red") +
-  geom_vline(xintercept = 0) +
-  geom_hline(yintercept = 0) +
-  annotate("text", 
-           x = - 3,
-           y = 0.5 + 0.05,
-           label = paste("y =", round(0.5, 3))) +
-  annotate("text", 
-           x = 1.5,
-           y = 0.05,
-           label = paste("x =", 0))
+    x <- seq(-5, 5, by = 0.1)
+    y <- 1 / (1 + exp(-x))
+    
+    ggplot(data = tibble(x = x, y = y), aes(x = x, y = y)) +
+      geom_line() +
+      geom_hline(yintercept = 0.5,
+                 linetype = "dashed", col = "red") +
+      geom_vline(xintercept = 0, linetype = "dashed", col = "red") +
+      geom_vline(xintercept = 0) +
+      geom_hline(yintercept = 0) +
+      annotate("text", 
+               x = - 3,
+               y = 0.5 + 0.05,
+               label = paste("y =", round(0.5, 3))) +
+      annotate("text", 
+               x = 1.5,
+               y = 0.05,
+               label = paste("x =", 0))
 ```
 이러한 선을 의사결정선(decision boundary)라고 부른다.
 
